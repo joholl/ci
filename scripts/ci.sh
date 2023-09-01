@@ -41,7 +41,7 @@ else
 fi
 
 docker run --cap-add=SYS_PTRACE $ci_env --env-file .ci/docker.env \
-  -v "$(pwd):$DOCKER_BUILD_DIR" "ghcr.io/tpm2-software/$DOCKER_IMAGE" \
+  -v "$(pwd):$DOCKER_BUILD_DIR" "ghcr.io/joholl/$DOCKER_IMAGE" \
   /bin/bash -c "$DOCKER_BUILD_DIR/.ci/$script"
 
 exit 0
