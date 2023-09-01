@@ -40,6 +40,26 @@ else
   script="$DOCKER_SCRIPT"
 fi
 
+# Register binfmt_misc entry for qemu-user-static
+case ${DOCKER_ARCH} in
+  amd64|i386)
+    QEMU_ARCH=
+    ;;
+  arm32*)
+    QEMU_ARCH=arm
+    ;;
+  arm64*)
+    QEMU_ARCH=aarch64
+    ;;
+  *)
+    QEMU_ARCH=${DOCKER_ARCH}
+    ;;
+esac
+if [ -n "${QEMU_ARCH}" ]; then
+  docker rm $(docker create --volume qemu-user-static:/usr/bin multiarch/qemu-user-static:${QEMU_ARCH} dummy)
+  docker run --rm --privileged --volume qemu-user-static:/usr/bin:ro multiarch/qemu-user-static:register --persistent yes
+fi
+
 docker run --cap-add=SYS_PTRACE $ci_env --env-file .ci/docker.env \
   -v "$(pwd):$DOCKER_BUILD_DIR" "ghcr.io/joholl/$DOCKER_IMAGE" \
   /bin/bash -c "$DOCKER_BUILD_DIR/.ci/$script"
