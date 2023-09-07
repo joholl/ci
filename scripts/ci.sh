@@ -56,8 +56,7 @@ case ${DOCKER_ARCH} in
     ;;
 esac
 if [ -n "${QEMU_ARCH}" ]; then
-  docker rm $(docker create --volume qemu-user-static:/usr/bin multiarch/qemu-user-static:${QEMU_ARCH} dummy)
-  docker run --rm --privileged --volume qemu-user-static:/usr/bin:ro multiarch/qemu-user-static:register --persistent yes
+  docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 fi
 
 docker run --cap-add=SYS_PTRACE $ci_env --env-file .ci/docker.env \
